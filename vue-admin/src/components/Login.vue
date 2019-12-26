@@ -33,8 +33,11 @@
         <span @click="forgetPwd">忘记密码</span>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="large-btn" v-show="action === 'login'">登录</el-button>
-        <el-button type="primary" class="large-btn" v-show="action === 'register'">注册</el-button>
+        <el-button type="primary" class="large-btn"
+        @click="login"
+        v-show="action === 'login'">登录</el-button>
+        <el-button type="primary" class="large-btn"
+        v-show="action === 'register'">注册</el-button>
       </el-form-item>
     </el-form>
     <!-- E 登录或注册表单 -->
@@ -59,6 +62,8 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
   data () {
     return {
@@ -72,6 +77,12 @@ export default {
     }
   },
   methods: {
+    // 登录
+    login () {
+      axios.get('/api/login/test').then(res => {
+        console.log(res)
+      })
+    },
     // 选择登录或注册
     chooseAction (val) {
       this.action = val
