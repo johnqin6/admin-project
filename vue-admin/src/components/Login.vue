@@ -62,7 +62,6 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 
 export default {
   data () {
@@ -78,10 +77,13 @@ export default {
   },
   methods: {
     // 登录
-    login () {
-      axios.get('/api/login/test').then(res => {
+    async login () {
+      try {
+        const res = await this.$http.get('/api/login/test')
         console.log(res)
-      })
+      } catch (err) {
+        this.$message.error(err.message)
+      }
     },
     // 选择登录或注册
     chooseAction (val) {
