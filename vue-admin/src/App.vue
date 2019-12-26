@@ -1,14 +1,15 @@
 <template>
-  <div id="app" class="app">
+  <div id="app">
     <router-view/>
   </div>
 </template>
 
 <style>
   @import url("./assets/css/reset.css");
+  @import url("./assets/css/common.css");
   html,
   body,
-  .app {
+  #app {
     width: 100%;
     height: 100%;
   }
