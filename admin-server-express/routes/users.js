@@ -8,9 +8,8 @@ const { encrypte } = require('../utils/crypto');
 const key = require('../config/key');
 const router = express.Router();
 
-
 /**
- * $router POST /users/register
+ * $router POST users/register
  * @desc 注册接口
  * @access public
  */
@@ -61,7 +60,7 @@ router.post('/register', (req, res) => {
 });
 
 /**
- * $router POST /users/login
+ * $router POST users/login
  * @desc 登录接口
  * @access public
  */
@@ -106,6 +105,63 @@ router.get('/getUserInfo', passport.authenticate('jwt', {session: false}), (req,
       identity: req.user.identity,
       avatar: req.user.avatar
     }
+  });
+})
+
+/**
+ * $route POST users/resetPassword
+ * @desc 重置密码 用于忘记密码的情况
+ * @access public
+ */
+router.post('/resetPassword', (req, res) => {
+  const phone = req.body.phone || '';
+  const email = req.body.email || '';
+  let password = req.body.password;
+  let accountType = 'email';
+  let accountValue = ''
+  // 验证邮箱注册还是手机注册
+  if (email && validation.isEmail(email)) {
+    accountType = 'email';
+    accountValue = email;
+  } else if(phone && validation.isPhone(phone)) {
+    accountType = 'phone';
+    accountValue = phone;
+  } else {
+    return res.send({ error: 1, message: '手机号或邮箱格式错误！' });
+  }
+  password = encrypte(password); // 密码加密
+  User.update({ [accountType]:  accountValue}, { password }, err => {
+    if (err) {
+      console.log(err);
+      return res.status(500).send({ error: 1, message: '密码更新失败！'});
+    }
+    res.send({ error: 0, message: '密码修改成功！' });
+  });
+
+})
+
+/**
+ * $route POST users/updatePassword
+ * @desc 修改密码 用于忘记密码的情况
+ * @access private(私密的，只有令牌才能访问)
+ */
+router.post('/updatePassword/:id', passport.authenticate('jwt', {session: false }), (req, res) => {
+  const curUserId = req.query.id;
+  const userId = req.body.id;
+  const password = req.body.password;
+  const oldPassword = req.body.oldPassword ? encrypte(req.body.oldPassword) : '';
+  const params = {
+    '_id': userId
+  };
+  if (curUserId === userId && oldPassword) { // 如果修改当前用户密码
+    params.password = oldPassword;
+  }
+  User.findOneAndUpdate(params, { password }, err => {
+    if (err) {
+      console.log(err);
+      return res.status(500).send({ error: 1, message: err });
+    }
+    res.send({ error: 0, message: '密码修改成功！' });
   });
 })
 
