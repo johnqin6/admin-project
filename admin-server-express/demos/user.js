@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const mongodbUrl = require('../config/key').mongoULI;
 const User = require('../models/User');
 const gravatar = require('gravatar'); // 生成头像插件
+const { encrypte } = require('../utils/crypto');
 
 // 连接数据库
 mongoose.connect(mongodbUrl, { useNewUrlParser: true })
@@ -12,6 +13,7 @@ mongoose.connect(mongodbUrl, { useNewUrlParser: true })
 function creteUser(params) {
   // 获取头像
   params.avatar = gravatar.url(params.email, {s: '200', r: 'pg', d: 'mm'});
+  params.password = encrypte(params.password);
   console.log(params);
   const user = new User(params);
   user.save((err, res) => {
@@ -27,18 +29,18 @@ function findUser(params) {
 }
 
 // findUser({ username: 'admin', password: 'admin'});
-findUser({ $or: [
-  { email: 'admin@rektec.com.cn' },
-  { phone: 'admin@rektec.com.cn' }
-]})
+// findUser({ $or: [
+//   { email: 'admin@rektec.com.cn' },
+//   { phone: 'admin@rektec.com.cn' }
+// ]})
 
 
-// creteUser({
-//   email: 'admin@rektec.com.cn',
-//   password: 'admin',
-//   username: 'admin',
-//   identity: 'admin'
-// });
+creteUser({
+  email: 'admin@rektec.com.cn',
+  password: 'admin',
+  username: 'admin',
+  identity: 'admin'
+});
 
 // creteUser({
 //   email: 'user@qq.com.cn',

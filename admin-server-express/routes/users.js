@@ -4,6 +4,7 @@ const gravatar = require('gravatar');
 const passport = require('passport');
 const User = require('../models/User');
 const validation = require('../common/validation');
+const { encrypte } = require('../utils/crypto');
 const key = require('../config/key');
 const router = express.Router();
 
@@ -41,6 +42,8 @@ router.post('/register', (req, res) => {
       avatar = gravatar.url(email_or_phone, {s: '200', r: 'pg', d: 'mm'});
     }
     avatar = gravatar.url('admin@rektec.com.cn', {s: '200', r: 'pg', d: 'mm'});
+    // 密码加密
+    passport = encrypte(password);
     const newUser = new User({
       username,
       password,
@@ -64,7 +67,7 @@ router.post('/register', (req, res) => {
  */
 router.post('/login', (req, res) => {
   const username = req.body.userName;
-  const password = req.body.password;
+  const password = encrypte(req.body.password); // 密码加密
   // 查询数据库
   User.findOne({username, password }).then(user => {
     if (!user) {
