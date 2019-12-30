@@ -26,7 +26,11 @@ function findUser(params) {
   });
 }
 
-findUser({ username: 'admin', password: 'admin'});
+// findUser({ username: 'admin', password: 'admin'});
+findUser({ $or: [
+  { email: 'admin@rektec.com.cn' },
+  { phone: 'admin@rektec.com.cn' }
+]})
 
 
 // creteUser({
