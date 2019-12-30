@@ -3,8 +3,8 @@ var router = express.Router();
 
 router.get('/test', function(req, res, next) {
   res.send({
-    error: 1,
-    message: 'success'
+    error: 0,
+    data: 'success'
   });
 });
 
