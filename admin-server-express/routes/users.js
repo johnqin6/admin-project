@@ -1,7 +1,10 @@
 const express = require('express');
 const jst = require('jsonwebtoken');
+const gravatar = require('gravatar');
+const passport = require('passport');
 const User = require('../models/User');
 const validation = require('../common/validation');
+const key = require('../config/key');
 const router = express.Router();
 
 
@@ -32,16 +35,25 @@ router.post('/register', (req, res) => {
     if (user) {
       return res.send({ error: 1, message: '该邮箱或手机号已被注册！'});
     }
-    User.save({
+    let avatar = '';
+    if (accountType === 'email') {
+      // 获取头像
+      avatar = gravatar.url(email_or_phone, {s: '200', r: 'pg', d: 'mm'});
+    }
+    avatar = gravatar.url('admin@rektec.com.cn', {s: '200', r: 'pg', d: 'mm'});
+    const newUser = new User({
       username,
       password,
+      avatar,
       [accountType]: email_or_phone
-    }).then(err => {
+    });
+    newUser.save().then(err => {
       if (err) {
         return res.status(500).send({ error: 1, message: err });
       }
       return res.send({ error: 0, data: null });
     })
+
   })
 });
 
@@ -58,9 +70,40 @@ router.post('/login', (req, res) => {
     if (!user) {
       return res.status(400).send({ error: 1, message: '用户名或密码错误！'});
     }
-    return res.send({ error: 0, data: user });
+    const rule = {
+      id: user._id,
+      name: user.username,
+      avatar: user.avatar,
+      identity: user.identity
+    }
+    // 设置token
+    // jst.sign("规则", "加密名称", "过期时间", "箭头函数")
+    jst.sign(rule, key.secretOrkey, { expiresIn: 3600}, (err, token) => {
+      if (err) throw err;
+      res.send({
+        error: 0,
+        token: 'Bearer ' + token
+      });
+    });
+    // return res.send({ error: 0, data: user });
   });
 });
 
+/**
+ * $route GET users/getUserInfo
+ * @desc 验证token, 获取用户信息
+ * @access private(私密的，只有令牌才能访问)
+ */
+router.get('/getUserInfo', passport.authenticate('jwt', {session: false}), (req, res) => {
+  res.send({
+    error: 0,
+    data: {
+      id: req.user.id,
+      username: req.user.username,
+      identity: req.user.identity,
+      avatar: req.user.avatar
+    }
+  });
+})
 
 module.exports = router;

@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -22,6 +23,12 @@ const dbUrl = require('./config/key').mongoULI;
 mongoose.connect(dbUrl, { useNewUrlParser: true })
         .then(() => console.log('mongodb 连接成功！'))
         .catch(err => console.log(err));
+
+// passport 初始化，passport用于验证token
+app.use(passport.initialize());
+
+// 引入passport.js并传入passport包，如此就可以在passport.js使用passport
+require('./config/passport')(passport);
 
 app.use(logger('dev'));
 app.use(express.json());
