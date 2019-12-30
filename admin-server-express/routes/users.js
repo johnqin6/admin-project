@@ -165,4 +165,31 @@ router.post('/updatePassword/:id', passport.authenticate('jwt', {session: false 
   });
 })
 
+/**
+ * $route GET users/list
+ * @desc 获取用户列表数据
+ * @access private(私密的，只有管理员令牌才能访问)
+ */
+router.get('/list', passport.authenticate('jwt', {session: false }), (req, res) => {
+  const identity = req.user.identity;
+  const pageIndex = parseInt(req.query.pageIndex);
+  const pageSize = parseInt(req.query.pageSize);
+  const queryStr = req.query.queryStr || '';
+  const params = {};
+  if (identity !== 'admin') { // 用户权限非管理员, 返回空数据
+    return res.send({ error: 0, data: []});
+  }
+  if (queryStr) { // 如果queryStr有值就模糊查询 例如{ username: /adm/ }
+    params.username = new RegExp(queryStr);
+  }
+  const index = (pageIndex - 1) * pageSize;
+  User.find(params, { '__v':  0, 'password': 0})
+      .skip(index) // 从多少条取数据
+      .limit(pageSize) // 去多少条
+      .sort({'updateTime': -1}) // 更新时间倒序排列
+      .then(users => { // 执行查询语句
+        res.send({ error: 0, data: users})
+      })
+})
+
 module.exports = router;
