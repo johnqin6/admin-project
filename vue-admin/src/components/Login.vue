@@ -112,13 +112,21 @@ export default {
           userName: this.form.userName,
           password: this.form.password
         }
+        const loading = this.$loading({
+          lock: true,
+          text: '正在登录, 请稍后...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.5)'
+        })
         this.$http.post('/api/users/login', params).then(res => {
+          loading.close()
           this.$message.success('登录成功！')
           this.$store.commit('user/SET_TOKEN', res.token)
           this.$router.push({
             path: '/'
           })
         }).catch(err => {
+          loading.close()
           this.$message.error(err.message)
         })
       })
@@ -143,6 +151,7 @@ export default {
     // 选择登录或注册
     chooseAction (val) {
       this.action = val
+      this.notifyObj.close()
     },
     // 显示提示框
     showTip () {
@@ -157,6 +166,7 @@ export default {
     // 进入忘记密码模块
     forgetPwd () {
       this.$emit('forgetPwd')
+      this.notifyObj.close()
     },
     // 是否显示密码
     showPwd () {

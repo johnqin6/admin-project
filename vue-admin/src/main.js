@@ -6,6 +6,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/infont/iconfont.css'
 import http from './utils/http'
+import './directives'
 
 Vue.config.productionTip = false
 

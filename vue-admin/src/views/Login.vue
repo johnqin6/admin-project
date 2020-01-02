@@ -3,7 +3,9 @@
     <div class="login-container">
       <h2 class="title">VUE 后台管理系统</h2>
       <login-box v-show="pageState === 0" @forgetPwd="forgetPassword"></login-box>
-      <forget-password v-show="pageState === 1" @backLogin="backLogin"></forget-password>
+      <forget-password
+        v-show="pageState === 1"
+        @backLogin="backLogin"></forget-password>
     </div>
   </div>
 </template>
