@@ -36,3 +36,8 @@
 - 请求方式：GET
 - 参数：pageIndex(页码)、pageSize(条数)、queryStr(模糊查询条件)
 - 返回值：用户列表[id、 username(用户名)、identity(身份)、avatar(头像)、updateTime(更新时间)、createOn、email、birthday(出生日期)、gender(性别)、phone(手机号)]
+
+7. 获取用户详情接口
+8. 更新用户数据接口
+9. 删除用户接口
+10. 更新用户头像接口
