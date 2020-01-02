@@ -12,18 +12,18 @@
       >注册</span>
     </div>
     <!-- S 登录或注册表单 -->
-    <el-form ref="form" :model="form" class="logion-form">
-      <el-form-item>
+    <el-form ref="form" :model="form" status-icon :rules="rules" class="logion-form">
+      <el-form-item prop="userName">
         <el-input placeholder="用户名称" v-model="form.userName">
           <i slot="prefix" class="el-input__icon el-icon-user"></i>
         </el-input>
       </el-form-item>
-      <el-form-item v-show="action === 'register'">
+      <el-form-item v-if="action === 'register'" prop="email_or_phone">
         <el-input placeholder="手机号或邮箱" v-model="form.email_or_phone">
-          <i slot="prefix" class="el-input__icon el-icon-user"></i>
+          <i slot="prefix" class="el-input__icon el-icon-s-custom"></i>
         </el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="password">
         <el-input placeholder="密码" :type="pwdType" v-model="form.password">
           <i slot="prefix" class="el-input__icon el-icon-lock"></i>
           <i slot="suffix" class="el-input__icon el-icon-view" @click="showPwd"></i>
@@ -34,9 +34,10 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="large-btn"
-        @click="login"
+        @click="login('form')"
         v-show="action === 'login'">登录</el-button>
         <el-button type="primary" class="large-btn"
+        @click="register('form')"
         v-show="action === 'register'">注册</el-button>
       </el-form-item>
     </el-form>
@@ -62,9 +63,16 @@
   </div>
 </template>
 <script>
-
+import { isPhone, isEmail } from '../utils/validation'
 export default {
   data () {
+    let validateAccount = (rule, value, callback) => {
+      if (!isPhone(value) && !isEmail(value)) {
+        callback(new Error('请输入正确格式的手机号和密码!'))
+      } else {
+        callback()
+      }
+    }
     return {
       action: 'login',
       form: {
@@ -72,22 +80,79 @@ export default {
         email_or_phone: '',
         password: ''
       },
+      rules: { // 验证规则
+        userName: [
+          { required: true, message: '请输入用户名称', trigger: 'blur' },
+          { min: 1, max: 20, message: '长度在1到20个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 3, max: 20, message: '长度在3到20个字符', trigger: 'blur' }
+        ],
+        email_or_phone: [
+          { required: true, message: '请输入邮箱或手机号', trigger: 'blur' },
+          { validator: validateAccount, trigger: 'blur' }
+        ]
+      },
+      notifyObj: null,
       pwdType: 'password' // 控制显示或隐藏密码
     }
   },
+  mounted () {
+    this.showTip()
+  },
   methods: {
     // 登录
-    async login () {
-      try {
-        const res = await this.$http.get('/api/login/test')
-        console.log(res)
-      } catch (err) {
-        this.$message.error(err.message)
-      }
+    login (formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) {
+          return false
+        }
+        const params = {
+          userName: this.form.userName,
+          password: this.form.password
+        }
+        this.$http.post('/api/users/login', params).then(res => {
+          this.$message.success('登录成功！')
+          this.$store.commit('user/SET_TOKEN', res.token)
+          this.$router.push({
+            path: '/'
+          })
+        }).catch(err => {
+          this.$message.error(err.message)
+        })
+      })
+    },
+    register (formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) {
+          return false
+        }
+        this.$http.post('/api/users/register', this.form).then(res => {
+          if (res.error === 0) {
+            setTimeout(() => {
+              this.$message.success('注册成功！')
+              this.action = 'login'
+            }, 2000)
+          }
+        }).catch(err => {
+          this.$message.error(err.message)
+        })
+      })
     },
     // 选择登录或注册
     chooseAction (val) {
       this.action = val
+    },
+    // 显示提示框
+    showTip () {
+      this.notifyObj = this.$notify({
+        title: '提示',
+        message: '目前有两个用户身份，管理员和普通用户',
+        duration: 0,
+        iconClass: 'el-icon-s-opportunity',
+        customClass: 'login-opportunity'
+      })
     },
     // 进入忘记密码模块
     forgetPwd () {
@@ -201,5 +266,10 @@ export default {
       }
     }
   }
+}
+</style>
+<style>
+.el-notification__icon {
+  color: #ffc107;
 }
 </style>

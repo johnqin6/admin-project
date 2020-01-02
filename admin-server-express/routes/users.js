@@ -16,7 +16,7 @@ const router = express.Router();
 router.post('/register', (req, res) => {
   const email_or_phone = req.body.email_or_phone;
   const username = req.body.userName;
-  const password = req.body.password;
+  let password = req.body.password;
   let accountType = '';
   // 验证邮箱注册还是手机注册
   if (validation.isEmail(email_or_phone)) {
@@ -31,31 +31,37 @@ router.post('/register', (req, res) => {
   User.findOne({ $or: [
     { email: email_or_phone },
     { phone: email_or_phone}
-  ]}).then(user => {
-    if (user) {
+  ]}).then(u => {
+    if (u) {
       return res.send({ error: 1, message: '该邮箱或手机号已被注册！'});
     }
-    let avatar = '';
-    if (accountType === 'email') {
-      // 获取头像
-      avatar = gravatar.url(email_or_phone, {s: '200', r: 'pg', d: 'mm'});
-    }
-    avatar = gravatar.url('admin@rektec.com.cn', {s: '200', r: 'pg', d: 'mm'});
-    // 密码加密
-    passport = encrypte(password);
-    const newUser = new User({
-      username,
-      password,
-      avatar,
-      [accountType]: email_or_phone
-    });
-    newUser.save().then(err => {
-      if (err) {
-        return res.status(500).send({ error: 1, message: err });
+    // 判断用户名是否已被注册
+    User.findOne({ username }).then(user => {
+      if (user) {
+        return res.send({ error: 1, message: '该用户名已被注册！'});
       }
-      return res.send({ error: 0, data: null });
-    })
+      let avatar = '';
+      if (accountType === 'email') {
+        // 获取头像
+        avatar = gravatar.url(email_or_phone, {s: '200', r: 'pg', d: 'mm'});
+      }
+      avatar = gravatar.url('admin@rektec.com.cn', {s: '200', r: 'pg', d: 'mm'});
+      // 密码加密
+      password = encrypte(password);
+      const newUser = new User({
+        username,
+        password,
+        avatar,
+        [accountType]: email_or_phone
+      });
+      newUser.save().then(users => {
+        if (users) {
+          return res.send({ error: 0, message: '注册成功！' });
+        }
+        return res.send({ error: 1, message: '注册失败！' });
+      })
 
+    })
   })
 });
 
@@ -70,7 +76,7 @@ router.post('/login', (req, res) => {
   // 查询数据库
   User.findOne({username, password }).then(user => {
     if (!user) {
-      return res.status(400).send({ error: 1, message: '用户名或密码错误！'});
+      return res.send({ error: 1, message: '用户名或密码错误！'});
     }
     const rule = {
       id: user._id,
