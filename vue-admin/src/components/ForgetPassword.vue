@@ -25,10 +25,12 @@
         </el-input>
       </el-form-item>
       <el-form-item>
+        <captcha-input @getCaptch="getCaptch"></captcha-input>
+      </el-form-item>
+      <el-form-item>
         <el-button type="primary" class="large-btn" @click="resetPwd">重置密码</el-button>
       </el-form-item>
     </el-form>
-    <captcha-input></captcha-input>
     <p @click="backLogin" class="back-login">返回登录页面</p>
   </div>
 </template>
@@ -56,6 +58,7 @@ export default {
     return {
       accountType: 1,
       accountTypeMemo: '请输入邮箱',
+      yzm: '',
       formData: {
         email_or_phone: '',
         password: '',
@@ -88,10 +91,21 @@ export default {
     backLogin () {
       this.$emit('backLogin')
     },
+    getCaptch (val) {
+      this.yzm = val
+    },
     // 重置密码
     resetPwd () {
       this.$refs.form.validate(valid => {
         if (!valid) {
+          return false
+        }
+        let captcha = document.cookie.split('=')[1]
+        if (!this.yzm) {
+          this.$message.warning('请输入验证码！')
+          return false
+        } else if (this.yzm !== captcha) {
+          this.$message.warning('验证码错误！')
           return false
         }
         const params = {
