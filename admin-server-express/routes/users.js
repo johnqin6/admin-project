@@ -2,6 +2,8 @@ const express = require('express');
 const jst = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const svgCaptcha = require('svg-captcha');
 const User = require('../models/User');
 const validation = require('../common/validation');
 const { encrypte } = require('../utils/crypto');
@@ -144,6 +146,27 @@ router.post('/resetPassword', (req, res) => {
     res.send({ error: 0, message: '密码修改成功！' });
   });
 
+})
+
+/**
+ * $route GET users/getCaptcha
+ * @desc 生成图片验证码
+ * @access public
+ */
+router.get('/getCaptcha', (req, res) => {
+  const captcha = svgCaptcha.create({
+    inverse: false, // 翻转颜色
+    fontSize: 36,
+    noise: 2, // 噪声线条数
+    width: 80,
+    height: 30
+  });
+  // 保存到session, 忽略大小写
+  req.session = captcha.text.toLowerCase();
+  // 保存到cookie 方便前端调用验证
+  res.cookie('captcha', req.session);
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.send(String(captcha.data));
 })
 
 /**
