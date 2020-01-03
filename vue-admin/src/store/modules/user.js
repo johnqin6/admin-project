@@ -1,11 +1,9 @@
 const state = {
-  token: localStorage.getItem('token') ? localStorage.getItem('token') : '', // 认证凭证
-  userInfo: {
-    id: '',
-    username: '',
-    identity: '',
-    avatar: ''
-  }
+  token: localStorage.getItem('token')
+    ? localStorage.getItem('token') : '', // 认证凭证
+  userInfo: localStorage.getItem('userInfo')
+    ? JSON.parse(localStorage.getItem('userInfo'))
+    : {}
 }
 
 const mutations = {
@@ -15,6 +13,7 @@ const mutations = {
   },
   DEL_TOKEN (state) {
     state.token = ''
+    localStorage.setItem('userInfo', '')
   },
   SET_USERINFO (state, payload) {
     state.userInfo = payload
@@ -22,6 +21,7 @@ const mutations = {
     state.userInfo.username = payload.username
     state.userInfo.identity = payload.identity
     state.userInfo.avatar = payload.avatar
+    localStorage.setItem('userInfo', JSON.stringify(state.userInfo))
   }
 }
 
