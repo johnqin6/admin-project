@@ -1,6 +1,8 @@
 const getters = {
   token: state => state.user.token,
-  userName: state => state.user.userName,
-  roles: state => state.user.roles
+  userInfo: state => {
+    return state.user.userInfo
+  },
+  opened: state => state.app.opened === 'true'
 }
 export default getters

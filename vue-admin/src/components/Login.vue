@@ -121,7 +121,9 @@ export default {
         this.$http.post('/api/users/login', params).then(res => {
           loading.close()
           this.$message.success('登录成功！')
+          this.notifyObj.close()
           this.$store.commit('user/SET_TOKEN', res.token)
+          this.getUserInfo()
           this.$router.push({
             path: '/'
           })
@@ -130,6 +132,14 @@ export default {
           this.$message.error(err.message)
         })
       })
+    },
+    async getUserInfo () {
+      try {
+        const res = await this.$http.get('api/users/getUserInfo')
+        this.$store.commit('user/SET_USERINFO', res.data)
+      } catch (err) {
+        this.$message.error(err.message)
+      }
     },
     register (formName) {
       this.$refs[formName].validate(valid => {
