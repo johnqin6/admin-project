@@ -34,6 +34,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.path === '/login') {
     next()
   } else {
+    console.log(store.getters.token)
     if (store.getters.token) {
       next()
     } else {
