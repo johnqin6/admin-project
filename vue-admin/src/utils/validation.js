@@ -8,3 +8,7 @@ export function isPhone (v) {
 export function isEmail (v) {
   return /^([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/.test(v)
 }
+
+export function isAbsolutePath (path) {
+  return /^(https?|tel|mailto)/.test(path)
+}

@@ -9,12 +9,25 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    redirect: '/index',
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('../views/index.vue'),
+        meta: {
+          title: '首页',
+          icon: 'el-icon-s-data'
+        }
+      }
+    ]
   },
   {
     path: '/login',
     name: 'login',
     component: () => import('../views/Login.vue'),
+    hidden: true,
     meta: {
       title: '登录'
     }
@@ -34,7 +47,6 @@ router.beforeEach(async (to, from, next) => {
   if (to.path === '/login') {
     next()
   } else {
-    console.log(store.getters.token)
     if (store.getters.token) {
       next()
     } else {

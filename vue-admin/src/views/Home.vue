@@ -1,12 +1,12 @@
 <template>
   <el-container class="home">
     <app-aside></app-aside>
-    <el-container>
+    <div style="width: 100%">
       <app-header></app-header>
       <el-main>
         <router-view/>
       </el-main>
-    </el-container>
+    </div>
   </el-container>
 </template>
 
