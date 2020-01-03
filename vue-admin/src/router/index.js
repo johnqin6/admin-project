@@ -31,6 +31,36 @@ const routes = [
     meta: {
       title: '登录'
     }
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: Home,
+    redirect: '/list',
+    meta: {
+      title: '用户管理',
+      icon: 'el-icon-user-solid'
+    },
+    children: [
+      {
+        path: 'list',
+        name: 'user-list',
+        component: () => import('../views/users/userList.vue'),
+        meta: {
+          title: '用户管理',
+          icon: 'el-icon-user-solid'
+        }
+      },
+      {
+        path: 'edit',
+        name: 'user-edit',
+        component: () => import('../views/users/userEdit.vue'),
+        meta: {
+          title: '用户编辑',
+          icon: 'el-icon-user-solid'
+        }
+      }
+    ]
   }
 ]
 

@@ -57,7 +57,6 @@ export default {
   methods: {
     getRouteMenuList () {
       this.menuList = this.$router.options.routes.filter(item => !item.hidden)
-      console.log(this.menuList)
     }
   },
   components: {

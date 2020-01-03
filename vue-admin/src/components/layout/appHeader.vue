@@ -1,14 +1,15 @@
 <template>
   <el-header class="app-header">
-    <span style="display: inline-block;">
+    <span class="app-bread">
       <i class="el-icon-s-fold switch-nav-way"
         :class="{'el-icon-s-unfold': opened}"
         @click="switchNavWay"></i>
+      <bread-crumb></bread-crumb>
     </span>
     <el-dropdown @command="handleCommand">
       <i class="el-icon-setting" style="margin-right: 15px; font-size: 20px;"></i>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="">查看个人信息</el-dropdown-item>
+        <el-dropdown-item command="">个人中心</el-dropdown-item>
         <el-dropdown-item command="logout">登出</el-dropdown-item>
       </el-dropdown-menu>
       <span>{{ userInfo.username }}</span>
@@ -18,13 +19,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import breadCrumb from '../BreadCrumb'
 
 export default {
-  data () {
-    return {
-
-    }
-  },
   computed: {
     ...mapGetters(['opened', 'userInfo'])
   },
@@ -45,6 +42,9 @@ export default {
         path: '/login'
       })
     }
+  },
+  components: {
+    breadCrumb
   }
 }
 </script>
@@ -60,11 +60,19 @@ export default {
   line-height: 60px;
   text-align: right;
   font-size: 12px;
-  .switch-nav-way {
+  .app-bread {
     position: absolute;
-    left: 50px;
-    top: 20px;
-    font-size: 20px;
+    left: 20px;
+    top: 0;
+    width: 30%;
+    padding-top: 20px;
+    .switch-nav-way {
+      float: left;
+      height: 100%;
+      margin-right: 20px;
+      margin-top: -2px;
+      font-size: 20px;
+    }
   }
   .avatar-img {
     position: relative;
