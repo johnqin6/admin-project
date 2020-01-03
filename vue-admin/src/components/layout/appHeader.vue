@@ -6,15 +6,21 @@
         @click="switchNavWay"></i>
       <bread-crumb></bread-crumb>
     </span>
-    <el-dropdown @command="handleCommand">
-      <i class="el-icon-setting" style="margin-right: 15px; font-size: 20px;"></i>
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="">个人中心</el-dropdown-item>
-        <el-dropdown-item command="logout">登出</el-dropdown-item>
-      </el-dropdown-menu>
-      <span>{{ userInfo.username }}</span>
-      <img class="avatar-img" :src="userInfo.avatar" alt="avater" >
-    </el-dropdown>
+    <div class="header-right">
+      <!-- <el-badge is-dot @click.native="toggleMsgShow">
+        <i class="el-icon-message-solid iconFont"></i>
+      </el-badge> -->
+      <el-dropdown @command="handleCommand">
+        <div>
+          <span>{{ userInfo.username }}</span>
+          <img class="avatar-img" :src="userInfo.avatar" alt="avater" >
+        </div>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="">个人中心</el-dropdown-item>
+          <el-dropdown-item command="logout">登出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
   </el-header>
 </template>
 <script>
@@ -26,6 +32,9 @@ export default {
     ...mapGetters(['opened', 'userInfo'])
   },
   methods: {
+    toggleMsgShow () {
+
+    },
     switchNavWay () {
       this.$store.commit('app/SET_OPENED', !this.opened)
     },
