@@ -2,7 +2,6 @@ const express = require('express');
 const jst = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const passport = require('passport');
-const cookieParser = require('cookie-parser');
 const svgCaptcha = require('svg-captcha');
 const User = require('../models/User');
 const validation = require('../common/validation');
@@ -88,7 +87,7 @@ router.post('/login', (req, res) => {
     }
     // 设置token
     // jst.sign("规则", "加密名称", "过期时间", "箭头函数")
-    jst.sign(rule, key.secretOrkey, { expiresIn: 3600}, (err, token) => {
+    jst.sign(rule, key.secretOrkey, { expiresIn: 3600 }, (err, token) => {
       if (err) throw err;
       res.send({
         error: 0,

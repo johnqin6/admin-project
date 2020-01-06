@@ -3,6 +3,7 @@ const getters = {
   userInfo: state => {
     return state.user.userInfo
   },
-  opened: state => state.app.opened === 'true'
+  opened: state => state.app.opened === 'true',
+  isMessageShow: state => state.app.isMessageShow
 }
 export default getters

@@ -7,9 +7,10 @@
       <bread-crumb></bread-crumb>
     </span>
     <div class="header-right">
-      <!-- <el-badge is-dot @click.native="toggleMsgShow">
+      <el-badge is-dot @click.native="toggleMsgShow"
+        class="message-tip-icon">
         <i class="el-icon-message-solid iconFont"></i>
-      </el-badge> -->
+      </el-badge>
       <el-dropdown @command="handleCommand">
         <div>
           <span>{{ userInfo.username }}</span>
@@ -29,12 +30,14 @@ import breadCrumb from '../BreadCrumb'
 
 export default {
   computed: {
-    ...mapGetters(['opened', 'userInfo'])
+    ...mapGetters(['opened', 'userInfo', 'isMessageShow'])
   },
   methods: {
+    // 切换信息框是否显示
     toggleMsgShow () {
-
+      this.$store.commit('app/SET_MESSAGESHOW', !this.isMessageShow)
     },
+    // 切换菜单栏是否展开
     switchNavWay () {
       this.$store.commit('app/SET_OPENED', !this.opened)
     },
@@ -90,6 +93,18 @@ export default {
     height: 40px;
     margin-left: 10px;
     border-radius: 50%;
+  }
+  .message-tip-icon {
+    font-size: 25px;
+    margin-right: 20px;
+  }
+}
+</style>
+<style lang="less">
+.message-tip-icon {
+  .el-badge__content.is-fixed.is-dot {
+    top: 21px;
+    right: 11px;
   }
 }
 </style>
