@@ -60,10 +60,31 @@
       </ul>
     </div>
     <!-- E 第三方账户登录 -->
+    <!-- 滑动验证 -->
+    <div class="slideShadow" v-show="showSlide">
+      <transition>
+        <div class="slideSty animated bounce">
+          <slide-verify
+            @success="onSuccess"
+            @fail="onFail"
+            :sliderText="text"
+            :w="350"
+            :h="175"
+            ref="slideDiv"
+          ></slide-verify>
+          <div class="iconBtn">
+            <i class="el-icon-circle-close" @click="showSlide = false"></i
+            ><i class="el-icon-refresh" @click="refresh"></i>
+          </div>
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 <script>
 import { isPhone, isEmail } from '../utils/validation'
+import slideVerify from './SlideVerify'
+
 export default {
   data () {
     let validateAccount = (rule, value, callback) => {
@@ -75,6 +96,8 @@ export default {
     }
     return {
       action: 'login',
+      text: '向右滑动',
+      showSlide: false,
       form: {
         userName: '',
         email_or_phone: '',
@@ -102,35 +125,49 @@ export default {
     this.showTip()
   },
   methods: {
+    onSuccess () {
+      this.showSlide = false
+      this.sendLogin()
+    },
+    onFail () {
+      this.$message.error('验证失败')
+    },
+    refresh () {
+      this.$refs.slideDiv.reset()
+    },
+    async sendLogin () {
+      const params = {
+        userName: this.form.userName,
+        password: this.form.password
+      }
+      const loading = this.$loading({
+        lock: true,
+        text: '正在登录, 请稍后...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.5)'
+      })
+      try {
+        const res = await this.$http.post('/api/users/login', params)
+        loading.close()
+        this.$message.success('登录成功！')
+        this.notifyObj.close()
+        this.$store.commit('user/SET_TOKEN', res.token)
+        await this.getUserInfo()
+        this.$router.push({
+          path: '/'
+        })
+      } catch (err) {
+        loading.close()
+        this.$message.error(err.message)
+      }
+    },
     // 登录
     login (formName) {
       this.$refs[formName].validate(valid => {
         if (!valid) {
           return false
         }
-        const params = {
-          userName: this.form.userName,
-          password: this.form.password
-        }
-        const loading = this.$loading({
-          lock: true,
-          text: '正在登录, 请稍后...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.5)'
-        })
-        this.$http.post('/api/users/login', params).then(res => {
-          loading.close()
-          this.$message.success('登录成功！')
-          this.notifyObj.close()
-          this.$store.commit('user/SET_TOKEN', res.token)
-          this.getUserInfo()
-          this.$router.push({
-            path: '/'
-          })
-        }).catch(err => {
-          loading.close()
-          this.$message.error(err.message)
-        })
+        this.showSlide = true
       })
     },
     async getUserInfo () {
@@ -186,11 +223,15 @@ export default {
         this.pwdType = 'password'
       }
     }
+  },
+  components: {
+    slideVerify
   }
 }
 </script>
 <style lang="less" scoped>
 .login-box {
+  position: relative;
   width: 100%;
   padding: 20px;
   background-color: #fff;
@@ -287,9 +328,54 @@ export default {
     }
   }
 }
+.slideShadow {
+  position: fixed;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  // background: rgba(0, 0, 0, 0.6);
+}
+.slideSty {
+  position: absolute;
+  width: 380px;
+  height: 311px;
+  background: #e8e8e8;
+  border: 1px solid #dcdcdc;
+  left: 50%;
+  top: 50%;
+  margin-left: -188px;
+  margin-top: -176px;
+  z-index: 99;
+  border-radius: 5px;
+}
+.iconBtn {
+  padding: 9px 0 0 19px;
+  color: #5f5f5f;
+  border-top: 1px solid #d8d8d8;
+  margin-top: 17px;
+  i {
+    font-size: 22px;
+    cursor: pointer;
+  }
+  i:last-child {
+    margin-left: 7px;
+  }
+}
 </style>
 <style>
 .el-notification__icon {
   color: #ffc107;
+}
+
+.slideSty .slide-verify {
+  margin: 13px auto 0 auto;
+  width: 350px !important;
+}
+.slideSty .slide-verify-slider {
+  width: 100% !important;
+}
+.slideSty .slide-verify-refresh-icon {
+  display: none;
 }
 </style>
