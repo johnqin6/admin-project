@@ -1,19 +1,20 @@
 <template>
-  <el-header class="app-header">
+  <el-header class="header app-header">
     <span class="app-bread">
       <i class="el-icon-s-fold switch-nav-way"
         :class="{'el-icon-s-unfold': opened}"
+        id="domColapse"
         @click="switchNavWay"></i>
       <bread-crumb></bread-crumb>
     </span>
     <div class="header-right">
-      <full-screen></full-screen>
-      <el-badge is-dot @click.native="toggleMsgShow"
+      <full-screen id="domFullScreen"></full-screen>
+      <el-badge is-dot @click.native="toggleMsgShow" id="domMessage"
         class="message-tip-icon">
         <i class="el-icon-message-solid iconFont"></i>
       </el-badge>
       <el-dropdown @command="handleCommand">
-        <div>
+        <div id="domPersonal">
           <span>{{ userInfo.username }}</span>
           <img class="avatar-img" :src="userInfo.avatar" alt="avater" >
         </div>

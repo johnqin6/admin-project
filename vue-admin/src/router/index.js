@@ -33,6 +33,23 @@ const routes = [
     }
   },
   {
+    path: '/driver',
+    name: 'driver',
+    component: Home,
+    redirect: '/drover/index',
+    children: [
+      {
+        path: 'index',
+        name: 'Driver-index',
+        component: () => import('../views/DriverPage'),
+        meta: {
+          title: '引导指南',
+          icon: 'el-icon-s-flag'
+        }
+      }
+    ]
+  },
+  {
     path: '/user',
     name: 'user',
     component: Home,

@@ -1,5 +1,5 @@
 <template>
-  <el-aside class="app-aside" width="200" ref="aside">
+  <el-aside class="app-aside" id="domSideBar" width="200" ref="aside">
     <div class="app-sign">
       <span>
         <svg
