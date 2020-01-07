@@ -33,6 +33,15 @@ const routes = [
     }
   },
   {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/404.vue'),
+    hidden: true,
+    meta: {
+      title: '404'
+    }
+  },
+  {
     path: '/driver',
     name: 'driver',
     component: Home,
@@ -78,6 +87,12 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '*',
+    name: '*404',
+    redirect: '/404',
+    hidden: true
   }
 ]
 
