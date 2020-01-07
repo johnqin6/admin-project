@@ -7,6 +7,7 @@
       <bread-crumb></bread-crumb>
     </span>
     <div class="header-right">
+      <full-screen></full-screen>
       <el-badge is-dot @click.native="toggleMsgShow"
         class="message-tip-icon">
         <i class="el-icon-message-solid iconFont"></i>
@@ -27,6 +28,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import breadCrumb from '../BreadCrumb'
+import fullScreen from '../FullScreen'
 
 export default {
   computed: {
@@ -56,7 +58,8 @@ export default {
     }
   },
   components: {
-    breadCrumb
+    breadCrumb,
+    fullScreen
   }
 }
 </script>

@@ -11,7 +11,7 @@
           class="home-drawer"
           :visible.sync="isMessageShow"
           direction="rtl"
-          :size="360"
+          size="360"
           :modal="false"
           :before-close="handleClose">
           <ul>
